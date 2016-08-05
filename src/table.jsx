@@ -17,12 +17,11 @@ var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.c
             {"user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "026 6928 1321", "city": "Fulda" }
             ];
 
-
 var Table = React.createClass({
     getInitialState() {
         return {
             rows: this.props.rows,
-            hiddenColumns: []
+            hiddenColumns: this.props.hiddenColumns
         };
     },
 
@@ -57,12 +56,17 @@ var Table = React.createClass({
 
             var expander = null;
             if (this.props.expandRenderComponent && row._expanded) {
-                expander = <tr><td colSpan={this.props.cols.length}><this.props.expandRenderComponent item={row} /></td></tr>;
+                expander = <tr><td colSpan={this.props.cols.length + 1 - this.state.hiddenColumns.length}><this.props.expandRenderComponent item={row} /></td></tr>;
             }
 
             return (
                 <tbody key={index}>
-                    <tr onClick={this.changeExpandState.bind(this, index, row._expanded)}>{values}</tr>
+                    <tr>
+                        <td onClick={this.changeExpandState.bind(this, index, row._expanded)}>
+                            <button className="btn-caret"></button>
+                        </td>
+                        {values}
+                        </tr>
                     {expander}
                 </tbody>
             );
@@ -74,6 +78,7 @@ var Table = React.createClass({
             <table className = "collapse ba br2 b--black-10 pv2 ph3">
                 <thead>
                     <tr>
+                        <th></th>
                         {theads}
                     </tr>
                 </thead>
@@ -127,6 +132,7 @@ var ColumnsVisibilitySelector = React.createClass({
     },
 
     render: function () {
+        console.log("Hidden columns:",  this.props.hiddenColumns);
         var colNameInputs = this.props.cols.map(function (col) {
             return (
             <div key={col.Name} className="dropdown-select-option dropdown-checkbox">

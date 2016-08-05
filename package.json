@@ -22,7 +22,7 @@
     "url": "git+https://github.com/oxfordcc/react-collapsible-table.git"
   },
   "author": "Oxford Computer Consultants",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/oxfordcc/react-collapsible-table/issues"
   },

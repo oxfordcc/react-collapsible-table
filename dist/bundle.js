@@ -81,7 +81,7 @@
 	    getInitialState: function getInitialState() {
 	        return {
 	            rows: this.props.rows,
-	            hiddenColumns: []
+	            hiddenColumns: this.props.hiddenColumns
 	        };
 	    },
 
@@ -135,7 +135,7 @@
 	                    null,
 	                    _react2.default.createElement(
 	                        'td',
-	                        { colSpan: this.props.cols.length },
+	                        { colSpan: this.props.cols.length + 1 - this.state.hiddenColumns.length },
 	                        _react2.default.createElement(this.props.expandRenderComponent, { item: row })
 	                    )
 	                );
@@ -146,7 +146,12 @@
 	                { key: index },
 	                _react2.default.createElement(
 	                    'tr',
-	                    { onClick: this.changeExpandState.bind(this, index, row._expanded) },
+	                    null,
+	                    _react2.default.createElement(
+	                        'td',
+	                        { onClick: this.changeExpandState.bind(this, index, row._expanded) },
+	                        _react2.default.createElement('button', { className: 'btn-caret' })
+	                    ),
 	                    values
 	                ),
 	                expander
@@ -166,6 +171,7 @@
 	                    _react2.default.createElement(
 	                        'tr',
 	                        null,
+	                        _react2.default.createElement('th', null),
 	                        theads
 	                    )
 	                ),
@@ -218,6 +224,7 @@
 	    },
 
 	    render: function render() {
+	        console.log("Hidden columns:", this.props.hiddenColumns);
 	        var colNameInputs = this.props.cols.map(function (col) {
 	            return _react2.default.createElement(
 	                'div',
