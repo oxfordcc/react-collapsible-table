@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 var exampleCols = [{"Name": "User Name", "DataName": "user_name"},
             {"Name": "Email", "DataName": "email"},
             {"Name": "City", "DataName": "city"},
@@ -9,9 +12,9 @@ var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.c
             {"user_name": "Eric Lloyd", "email": "euismod@SuspendisseeleifendCras.com", "phone": "056 1415 3027", "city": "Laon" },
             {"user_name": "Bernard Dillard", "email": "pellentesque.Sed@justonec.net", "phone": "0845 46 49", "city": "Venezia" },
             {"user_name": "Rhea Simpson", "email": "non@laoreetliberoet.com", "phone": "070 1112 5392", "city": "Appleby" },
-            {"user_name": "Robert Key", "email": "mi@cubiliaCuraePhasellus.org", "phone": "(016977) 8754", "city": "Lonzee" },
+            {"user_name": "Robert Key", "email": "mi@cubiliaCuraePhasellus.org", "phone": "016977 8754", "city": "Lonzee" },
             {"user_name": "Desirae Mcleod", "email": "velit.eget.laoreet@ultriciesadipiscingenim.net", "phone": "0500 199196", "city": "Awka" },
-            {"user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "(026) 6928 1321", "city": "Fulda" }
+            {"user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "026 6928 1321", "city": "Fulda" }
             ];
 
 
@@ -43,7 +46,13 @@ var Table = React.createClass({
         var rows = this.state.rows.map(function(row, index) {
             var values = columns.map(function(column) {
                 var colValue = row[column.DataName];
-                return (<td className ="pv2 ph3 striped--border-bottom" key={colValue}>{colValue}</td>);
+                var tdValue = parseInt(colValue.replace(" ",''));
+                if(isNaN(tdValue)){
+                    return <td key={colValue} className ="pv2 ph3 striped--border-bottom">{colValue}</td>
+                }
+                else {
+                    return <td key={colValue} className="text-right pv2 ph3 striped--border-bottom">{colValue}</td>
+                }
             }.bind(this));
 
             var expander = null;
@@ -72,12 +81,6 @@ var Table = React.createClass({
             </table>
             </div>
         );
-    }
-});
-
-var ExpandRenderer = React.createClass({
-    render: function() {
-        return (<h1>"Hello"</h1>);
     }
 });
 
@@ -144,6 +147,14 @@ var ColumnsVisibilitySelector = React.createClass({
     }
 });
 
+var ExpandRenderer = React.createClass({
+    render: function() {
+        return (<h1>"Hello"</h1>);
+    }
+});
+
 ReactDOM.render(
     <Table cols={exampleCols} rows={exampleRows} hiddenColumns={["Phone"]} expandRenderComponent={ExpandRenderer}/ >, document.getElementById('table')
 );
+
+export default Table;

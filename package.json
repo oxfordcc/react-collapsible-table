@@ -6,6 +6,14 @@
   "directories": {
     "example": "examples"
   },
+  "keywords": [
+    "react",
+    "table",
+    "component",
+    "expandable",
+    "editable columns",
+    "react-table"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
