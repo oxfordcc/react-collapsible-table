@@ -1,26 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { orderBy, sortBy } from 'lodash';
 
 var exampleCols = [{"Name": "User Name", "DataName": "user_name"},
+            {"Name": "Id", "DataName": "id"},
             {"Name": "Email", "DataName": "email"},
             {"Name": "City", "DataName": "city"},
             {"Name": "Phone", "DataName": "phone"}];
 
-var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.ca", "phone": "055 2227 9788", "city": "Vedrin" },
-            {"user_name": "Grace Mathews", "email": "eleifend.egestas.Sed@vitae.ca", "phone": "056 7656 9273", "city": "Schwerin" },
-            {"user_name": "Caesar Mcmahon", "email": "neque.et@tempor.org", "phone": "0346 737 5936", "city": "Rendsburg" },
-            {"user_name": "Eric Lloyd", "email": "euismod@SuspendisseeleifendCras.com", "phone": "056 1415 3027", "city": "Laon" },
-            {"user_name": "Bernard Dillard", "email": "pellentesque.Sed@justonec.net", "phone": "0845 46 49", "city": "Venezia" },
-            {"user_name": "Rhea Simpson", "email": "non@laoreetliberoet.com", "phone": "070 1112 5392", "city": "Appleby" },
-            {"user_name": "Robert Key", "email": "mi@cubiliaCuraePhasellus.org", "phone": "016977 8754", "city": "Lonzee" },
-            {"user_name": "Desirae Mcleod", "email": "velit.eget.laoreet@ultriciesadipiscingenim.net", "phone": "0500 199196", "city": "Awka" },
-            {"user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "026 6928 1321", "city": "Fulda" }
+var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.ca", "phone": "055 2227 9788", "city": "Vedrin", "id": "334" },
+            {"user_name": "Grace Mathews", "email": "eleifend.egestas.Sed@vitae.ca", "phone": "056 7656 9273", "city": "Schwerin", "id": "335" },
+            {"user_name": "Caesar Mcmahon", "email": "neque.et@tempor.org", "phone": "0346 737 5936", "city": "Rendsburg", "id": "336" },
+            {"user_name": "Eric Lloyd", "email": "euismod@SuspendisseeleifendCras.com", "phone": "056 1415 3027", "city": "Laon", "id": "337" },
+            {"user_name": "Bernard Dillard", "email": "pellentesque.Sed@justonec.net", "phone": "0845 46 49", "city": "Venezia", "id": "338" },
+            {"user_name": "Rhea Simpson", "email": "non@laoreetliberoet.com", "phone": "070 1112 5392", "city": "Appleby", "id": "339" },
+            {"user_name": "Robert Key", "email": "mi@cubiliaCuraePhasellus.org", "phone": "016977 8754", "city": "Lonzee", "id": "314" },
+            {"user_name": "Desirae Mcleod", "email": "velit.eget.laoreet@ultriciesadipiscingenim.net", "phone": "0500 199196", "city": "Awka", "id": "341" },
+            {"user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "026 6928 1321", "city": "Fulda", "id": "344" }
             ];
 
 var Table = React.createClass({
     getInitialState() {
         return {
             rows: this.props.rows,
+            cols: this.props.cols,
             hiddenColumns: this.props.hiddenColumns
         };
     },
@@ -35,11 +38,22 @@ var Table = React.createClass({
         this.forceUpdate();
     },
 
+    filterData: function(col) {
+        var sortedRows = _.orderBy(this.state.rows, [col], ['asc', 'desc']);
+        this.setState({rows: sortedRows});
+    },
+
     render: function() {
+        var that = this;
         var columns = this.props.cols.filter(function(c) { return this.props.hiddenColumns.indexOf(c.Name) == -1; }.bind(this));
 
         var theads = columns.map(function(col, i) {
-            return (<th className = "ttu pv2 ph3 tl striped--border-bottom" key={col.Name}>{col.Name}</th>);
+            return (
+                <th className = "ttu pv2 ph3 tl striped--border-bottom nowrap" key={col.Name}>
+                    {col.Name}
+                    <button className="sort-btn" onClick={that.filterData.bind(this, col.DataName)}></button>
+                </th>
+            );
         });
 
         var rows = this.state.rows.map(function(row, index) {
@@ -50,7 +64,7 @@ var Table = React.createClass({
                     return <td key={colValue} className ="pv2 ph3 striped--border-bottom">{colValue}</td>
                 }
                 else {
-                    return <td key={colValue} className="text-right pv2 ph3 striped--border-bottom">{colValue}</td>
+                    return <td key={colValue} className="text-right truncate pv2 ph3 striped--border-bottom">{colValue}</td>
                 }
             }.bind(this));
 
@@ -62,8 +76,8 @@ var Table = React.createClass({
             return (
                 <tbody key={index}>
                     <tr>
-                        <td onClick={this.changeExpandState.bind(this, index, row._expanded)}>
-                            <button className="btn-caret"></button>
+                        <td onClick={this.changeExpandState.bind(this, index, row._expanded)} className="ph3 striped--border-bottom">
+                            <button className={row._expanded ? "rotated btn-caret" : "btn-caret"}></button>
                         </td>
                         {values}
                         </tr>
@@ -78,7 +92,7 @@ var Table = React.createClass({
             <table className = "collapse ba br2 b--black-10 pv2 ph3">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th className="ph3 striped--border-bottom"></th>
                         {theads}
                     </tr>
                 </thead>
@@ -132,7 +146,6 @@ var ColumnsVisibilitySelector = React.createClass({
     },
 
     render: function () {
-        console.log("Hidden columns:",  this.props.hiddenColumns);
         var colNameInputs = this.props.cols.map(function (col) {
             return (
             <div key={col.Name} className="dropdown-select-option dropdown-checkbox pv2 ph3">
@@ -155,12 +168,18 @@ var ColumnsVisibilitySelector = React.createClass({
 
 var ExpandRenderer = React.createClass({
     render: function() {
-        return (<h1>"Hello"</h1>);
+        return (
+            <div className="tc">
+                <h3>{this.props.item.user_name}</h3>
+                <h4>{this.props.item.email}</h4>
+                <p>More information about this user available <a href='#'>here</a></p>
+            </div>
+        );
     }
 });
 
 ReactDOM.render(
-    <Table cols={exampleCols} rows={exampleRows} hiddenColumns={["Phone"]} expandRenderComponent={ExpandRenderer}/ >, document.getElementById('table')
+    <Table cols={exampleCols} rows={exampleRows} hiddenColumns={[]} expandRenderComponent={ExpandRenderer}/ >, document.getElementById('table')
 );
 
 export default Table;
