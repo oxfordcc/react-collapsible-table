@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="author" content="@mrmrs">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="main.css">
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500,600,700" rel="stylesheet">
   </head>
 
@@ -31,9 +31,15 @@
 <div class="cf ph3 ph5-ns">
 <div class="fl w-100">
   </div>
-  <div class="pb3 pt4 white-80 fl-l w-66-l">
-    <h1 class="f4 f-subheadline-l f1-ns lh-title measure mtn">
-      Our react table is
+  <div class="pb3 pt4 white-90 fl-l w-66-l cd-intro">
+    <h1 class="f4 f-subheadline-l f1-ns lh-title measure mtn cd-headline letters type">
+      <span>Our react table is</span>
+      <span class="cd-words-wrapper waiting">
+        <b class="is-visible">expandable</b>
+        <b>filterable</b>
+        <b>sortable</b>
+        <b>awesome!</b>
+      </span>
     </h1>
     <p class="f5 f4-ns fw6 b measure lh-copy">
       This is our awesome react table. Check out the example, grab the code, and help us make it even better!
@@ -42,41 +48,37 @@
 </div>
       </article>
     </section>
-<div class="ph3 ph5-ns tl tl-ns bt b--light-gray pv3 pv5-ns">
+<div class="ph3 ph5-ns tl tl-ns bt b--light-gray pv3">
       <section class="cf" id="features">
                     <h1 class="fl w-100 mt5 f5 ttu tracked fw6">Features</h1>
                     <div class="cf">
                       <article class="pv2 fl w-100 w-33-l pr0 pr3-l">
-                        <h2 class="f4 f2-ns fw6 mb0">
-                          Runs on <a href="https://github.com/postcss/postcss" class="link dim near-black">Postcss</a>
+                        <h2 class="f4 f2-ns fw6 mb0 pb2">
+                          Expandable rows
                         </h2>
                         <p class="mv0 f5 lh-copy measure">
-                          A flexible plugin framework for post-processing css.
-                          <a href="https://github.com/postcss/postcss" class="link dn
-                            dim f6 db mid-gray">View on Github</a>
+                          We wanted to prioritise the information users see in our table, so our rows expand to show more underlying data.
                         </p>
                       </article>
                       <article class="pv2 fl w-100 w-33-l pl0 ph3-l">
-                        <h2 class="f4 f2-ns fw6 mb0">Mobile-first architecture </h2>
+                        <h2 class="f4 f2-ns fw6 mb0 pb2">Filterable columns </h2>
                         <p class="f5 measure lh-copy mt0">
-                          Base classes are mobile by default. Can be overridden by
-                          namespaced classes targeting larger breakpoints.
+                          We wanted to let our users remove any information they might not need to see, so columns can be filtered on or off.
                         </p>
                       </article>
                       <article class="pv2 fl w-100 w-33-l pr0 pl3-ns">
-                        <h2 class="f4 f2-ns fw6 mb0">
-                          Layout debugging
+                        <h2 class="f4 f2-ns fw6 mb0 pb2">
+                          Design built in
                         </h2>
                         <p class="f5 measure lh-copy mt0">
-                          Small css modules for debugging stacking and layout issues.
-                          Can easily be turned on or off during development.
+                          Our table is designed out of the box to follow table best practices. Lining & tabular numbers, correct alignment, and horizontal rules are built in.
                         </p>
                       </article>
                     </div>
                     <div class="cf">
                   </section>
                 </div>
-                <div class="ph3 ph5-ns tl tl-ns bt b--light-gray pv3 pv5-ns">
+                <div class="ph3 ph5-ns tl tl-ns bt b--light-gray pv3">
                       <section class="cf" id="features">
                                     <h1 class="fl w-100 mt5 f5 ttu tracked fw6 mb5">Example</h1>
                                     <div class="cf">
@@ -86,5 +88,7 @@
                                 </div>
     </main>
     <script src="../dist/bundle.js"></script>
+    <script src="jquery-2.1.1.js"></script>
+    <script src="main.js"></script> <!-- Resource jQuery -->
   </body>
 </html>
