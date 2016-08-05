@@ -6,18 +6,22 @@ Main features:
 - Columns visibility filtering
 
 # Usage
-```<Table cols={exampleCols} rows={exampleRows} hiddenColumns={[]} expandRenderComponent={ExpandRenderer}/ >```
+`<Table cols={exampleCols} rows={exampleRows} hiddenColumns={[]} expandRenderComponent={ExpandRenderer}/ >`
 
 # exampleCols
 exampleCols is a collection of objects in the format:
+
 ```
 var exampleCols = [{"Name": "User Name", "DataName": "user_name"},
     {"Name": "City", "DataName": "city"},
     {"Name": "Phone", "DataName": "phone"}];
-    ```
+```
+    
     
 #exampleRows 
+
 exampleRows is a collection of objects in the format:
+
 ```
 var exampleRows = [{"user_name": "Jael Bush", "phone": "055 2227 9788", "city": "Vedrin"},
     {"user_name": "Grace Mathews", "phone": "056 7656 9273", "city": "Schwerin"},
@@ -26,7 +30,9 @@ var exampleRows = [{"user_name": "Jael Bush", "phone": "055 2227 9788", "city": 
 ```
 
 #hiddenColumns 
+
 hiddenColumns is an array of DataName of the hidden columns.
+
 ```hiddenColumns={['user_name', 'city']}```
 Can be empty so all columns are visible by default.
 
