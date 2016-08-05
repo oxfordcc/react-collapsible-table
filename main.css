@@ -2339,9 +2339,6 @@ code, .code { font-family: Consolas, monaco, monospace; }
 .dropdown-options {
 	position: absolute;
 	position: absolute;
-    background: white;
-    border: 1px solid red;
-    padding: 10px;
 }
 
 .text-right {
