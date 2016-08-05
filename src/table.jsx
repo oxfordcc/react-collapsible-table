@@ -1,7 +1,7 @@
 var exampleCols = [{"Name": "User Name", "DataName": "user_name"},
             {"Name": "Email", "DataName": "email"},
             {"Name": "City", "DataName": "city"},
-            {"Name": "Phone", "DataName": "phone"}]; 
+            {"Name": "Phone", "DataName": "phone"}];
 
 var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.ca", "phone": "055 2227 9788", "city": "Vedrin" },
             {"user_name": "Grace Mathews", "email": "eleifend.egestas.Sed@vitae.ca", "phone": "056 7656 9273", "city": "Schwerin" },
@@ -37,13 +37,13 @@ var Table = React.createClass({
         var columns = this.props.cols.filter(function(c) { return this.props.hiddenColumns.indexOf(c.Name) == -1; }.bind(this));
 
         var theads = columns.map(function(col, i) {
-            return (<th key={col.Name}>{col.Name}</th>);
+            return (<th className = "ttu pv2 ph3 tl" key={col.Name}>{col.Name}</th>);
         });
 
         var rows = this.state.rows.map(function(row, index) {
-            var values = columns.map(function(column) {  
+            var values = columns.map(function(column) {
                 var colValue = row[column.DataName];
-                return (<td key={colValue}>{colValue}</td>);
+                return (<td className ="pv2 ph3" key={colValue}>{colValue}</td>);
             }.bind(this));
 
             var expander = null;
@@ -58,11 +58,11 @@ var Table = React.createClass({
                 </tbody>
             );
         }.bind(this));
-        
+
         return (
             <div>
                 <ColumnsVisibilitySelector hiddenColumns={this.props.hiddenColumns} cols={this.props.cols} onHiddenColumnsChanged={this.onHiddenColumnsChanged} />
-            <table>
+            <table className = "collapse ba br2 b--black-10 pv2 ph3">
                 <thead>
                     <tr>
                         {theads}
@@ -132,7 +132,7 @@ var ColumnsVisibilitySelector = React.createClass({
             </div>
             );
     }.bind(this));
-    
+
     return (
         <div className={"dropdown-select dropdown-select-trigger " + this.state.dropdownClass } ref="wrappedComponent">
             <button className="btn btn-dropdown" onClick={this.toggleDropdownVisibility }>Edit columns</button>
