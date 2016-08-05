@@ -18,8 +18,13 @@ var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.c
 var Table = React.createClass({
     getInitialState() {
         return {
-            rows: this.props.rows
+            rows: this.props.rows,
+            hiddenColumns: []
         };
+    },
+
+    onHiddenColumnsChanged: function (newHiddenColumns) {
+        this.setState({ hiddenColumns: newHiddenColumns });
     },
 
     changeExpandState: function(index, currentState) {
@@ -38,7 +43,7 @@ var Table = React.createClass({
         var rows = this.state.rows.map(function(row, index) {
             var values = columns.map(function(column) {  
                 var colValue = row[column.DataName];
-                return (<td>{colValue}</td>);
+                return (<td key={colValue}>{colValue}</td>);
             }.bind(this));
 
             var expander = null;
@@ -55,6 +60,8 @@ var Table = React.createClass({
         }.bind(this));
         
         return (
+            <div>
+                <ColumnsVisibilitySelector hiddenColumns={this.props.hiddenColumns} cols={this.props.cols} onHiddenColumnsChanged={this.onHiddenColumnsChanged} />
             <table>
                 <thead>
                     <tr>
@@ -63,6 +70,7 @@ var Table = React.createClass({
                 </thead>
                 {rows}
             </table>
+            </div>
         );
     }
 });
@@ -70,6 +78,69 @@ var Table = React.createClass({
 var ExpandRenderer = React.createClass({
     render: function() {
         return (<h1>"Hello"</h1>);
+    }
+});
+
+
+// in props it receives
+// - array of hidden columns
+// - cols
+
+
+var ColumnsVisibilitySelector = React.createClass({
+    getInitialState: function () {
+        return {
+            hiddenColumns: this.props.hiddenColumns,
+            dropdownClass: 'out'
+        }
+    },
+
+    toggleDropdownVisibility: function () {
+        this.state.dropdownClass === "out" ? this.setState({ dropdownClass: "in" }) : this.setState({ dropdownClass: "out" })
+    },
+
+    toggleColumnVisibility: function (columnName) {
+        var hiddenIndex = this.state.hiddenColumns.indexOf(columnName);
+        var newHidden = this.state.hiddenColumns;
+
+        if (hiddenIndex !== -1) newHidden.splice(hiddenIndex, 1);
+        else newHidden.push(columnName);
+
+        this.setState({ hiddenColumns: newHidden });
+        this.props.onHiddenColumnsChanged(newHidden);
+    },
+
+    handleOutsideClick: function (ev) {
+        var domNode = ReactDOM.findDOMNode(this);
+        if(!domNode || !domNode.contains(ev.target)) {
+            if (this.state.dropdownClass === 'in') {
+                this.setState({ dropdownClass: 'out' });
+            }
+        }
+    },
+
+    componentDidMount: function () {
+        window.addEventListener('click', this.handleOutsideClick, false);
+    },
+
+    render: function () {
+        var colNameInputs = this.props.cols.map(function (col) {
+            return (
+            <div key={col.Name} className="dropdown-select-option dropdown-checkbox">
+                <input type="checkbox" value={col.Name} id={col.Name} className="checkbox" checked={this.state.hiddenColumns.indexOf(col.Name) === -1} onChange={this.toggleColumnVisibility.bind(this, col.Name)} />
+                <label className="checkbox-label" htmlFor={col.Name}>{col.Name}</label>
+            </div>
+            );
+    }.bind(this));
+    
+    return (
+        <div className={"dropdown-select dropdown-select-trigger " + this.state.dropdownClass } ref="wrappedComponent">
+            <button className="btn btn-dropdown" onClick={this.toggleDropdownVisibility }>Edit columns</button>
+            <div className="dropdown-options">
+                {colNameInputs}
+            </div>
+        </div>
+        );
     }
 });
 
