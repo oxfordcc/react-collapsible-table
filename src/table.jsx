@@ -37,13 +37,13 @@ var Table = React.createClass({
         var columns = this.props.cols.filter(function(c) { return this.props.hiddenColumns.indexOf(c.Name) == -1; }.bind(this));
 
         var theads = columns.map(function(col, i) {
-            return (<th className = "ttu pv2 ph3 tl" key={col.Name}>{col.Name}</th>);
+            return (<th className = "ttu pv2 ph3 tl striped--border-bottom" key={col.Name}>{col.Name}</th>);
         });
 
         var rows = this.state.rows.map(function(row, index) {
             var values = columns.map(function(column) {
                 var colValue = row[column.DataName];
-                return (<td className ="pv2 ph3" key={colValue}>{colValue}</td>);
+                return (<td className ="pv2 ph3 striped--border-bottom" key={colValue}>{colValue}</td>);
             }.bind(this));
 
             var expander = null;
@@ -135,7 +135,7 @@ var ColumnsVisibilitySelector = React.createClass({
 
     return (
         <div className={"dropdown-select dropdown-select-trigger " + this.state.dropdownClass } ref="wrappedComponent">
-            <button className="btn btn-dropdown" onClick={this.toggleDropdownVisibility }>Edit columns</button>
+            <button className="btn btn-dropdown ba b--black-20 bg-white black-70 link br2 dim b dib mr3 pv2 ph3" onClick={this.toggleDropdownVisibility }>Edit columns</button>
             <div className="dropdown-options">
                 {colNameInputs}
             </div>

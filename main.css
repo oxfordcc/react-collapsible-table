@@ -1125,6 +1125,7 @@ code, .code { font-family: Consolas, monaco, monospace; }
 .striped--moon-gray:nth-child(odd) { background-color: #ccc; }
 .striped--light-gray:nth-child(odd) { background-color: #eee; }
 .striped--near-white:nth-child(odd) { background-color: #f4f4f4; }
+.striped--border-bottom { border-bottom: solid 1px rgba( 0, 0, 0, .1 ); }
 /*
 
    TEXT DECORATION
