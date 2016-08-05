@@ -228,11 +228,11 @@
 	        var colNameInputs = this.props.cols.map(function (col) {
 	            return _react2.default.createElement(
 	                'div',
-	                { key: col.Name, className: 'dropdown-select-option dropdown-checkbox' },
+	                { key: col.Name, className: 'dropdown-select-option dropdown-checkbox pv2 ph3' },
 	                _react2.default.createElement('input', { type: 'checkbox', value: col.Name, id: col.Name, className: 'checkbox', checked: this.state.hiddenColumns.indexOf(col.Name) === -1, onChange: this.toggleColumnVisibility.bind(this, col.Name) }),
 	                _react2.default.createElement(
 	                    'label',
-	                    { className: 'checkbox-label', htmlFor: col.Name },
+	                    { className: 'checkbox-label ph2', htmlFor: col.Name },
 	                    col.Name
 	                )
 	            );
@@ -240,15 +240,15 @@
 
 	        return _react2.default.createElement(
 	            'div',
-	            { className: "dropdown-select dropdown-select-trigger " + this.state.dropdownClass, ref: 'wrappedComponent' },
+	            { className: "dropdown-select dropdown-select-trigger mb2 " + this.state.dropdownClass, ref: 'wrappedComponent' },
 	            _react2.default.createElement(
 	                'button',
-	                { className: 'btn btn-dropdown ba b--black-20 bg-white black-70 link br2 dim b dib mr3 pv2 ph3', onClick: this.toggleDropdownVisibility },
+	                { className: 'btn btn-dropdown ba b--black-20 bg-white black-90 link br2 dim b dib mr3 pv2 ph3', onClick: this.toggleDropdownVisibility },
 	                'Edit columns'
 	            ),
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'dropdown-options' },
+	                { className: 'dropdown-options ba b--black-20 bg-white black-70 br2 pv2 ph2 mt1' },
 	                colNameInputs
 	            )
 	        );
