@@ -44,17 +44,16 @@ var Table = React.createClass({
     },
 
     render: function() {
-        var that = this;
         var columns = this.props.cols.filter(function(c) { return this.props.hiddenColumns.indexOf(c.Name) == -1; }.bind(this));
 
         var theads = columns.map(function(col, i) {
             return (
                 <th className = "ttu pv2 ph3 tl striped--border-bottom nowrap" key={col.Name}>
                     {col.Name}
-                    <button className="sort-btn" onClick={that.filterData.bind(this, col.DataName)}></button>
+                    <button className="sort-btn" onClick={this.filterData.bind(this, col.DataName)}></button>
                 </th>
             );
-        });
+        }.bind(this));
 
         var rows = this.state.rows.map(function(row, index) {
             var values = columns.map(function(column) {

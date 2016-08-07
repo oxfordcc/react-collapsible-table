@@ -105,7 +105,6 @@
 	    },
 
 	    render: function render() {
-	        var that = this;
 	        var columns = this.props.cols.filter(function (c) {
 	            return this.props.hiddenColumns.indexOf(c.Name) == -1;
 	        }.bind(this));
@@ -115,9 +114,9 @@
 	                'th',
 	                { className: 'ttu pv2 ph3 tl striped--border-bottom nowrap', key: col.Name },
 	                col.Name,
-	                _react2.default.createElement('button', { className: 'sort-btn', onClick: that.filterData.bind(this, col.DataName) })
+	                _react2.default.createElement('button', { className: 'sort-btn', onClick: this.filterData.bind(this, col.DataName) })
 	            );
-	        });
+	        }.bind(this));
 
 	        var rows = this.state.rows.map(function (row, index) {
 	            var values = columns.map(function (column) {
