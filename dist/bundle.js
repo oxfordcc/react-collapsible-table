@@ -62,6 +62,8 @@
 	    value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -72,229 +74,158 @@
 
 	var _lodash = __webpack_require__(176);
 
+	var _expandRenderer = __webpack_require__(178);
+
+	var _expandRenderer2 = _interopRequireDefault(_expandRenderer);
+
+	var _columnsVisibilitySelector = __webpack_require__(179);
+
+	var _columnsVisibilitySelector2 = _interopRequireDefault(_columnsVisibilitySelector);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var exampleCols = [{ "Name": "User Name", "DataName": "user_name" }, { "Name": "Id", "DataName": "id" }, { "Name": "Email", "DataName": "email" }, { "Name": "City", "DataName": "city" }, { "Name": "Phone", "DataName": "phone" }];
 
 	var exampleRows = [{ "user_name": "Jael Bush", "email": "porttitor.interdum@sed.ca", "phone": "055 2227 9788", "city": "Vedrin", "id": "334" }, { "user_name": "Grace Mathews", "email": "eleifend.egestas.Sed@vitae.ca", "phone": "056 7656 9273", "city": "Schwerin", "id": "335" }, { "user_name": "Caesar Mcmahon", "email": "neque.et@tempor.org", "phone": "0346 737 5936", "city": "Rendsburg", "id": "336" }, { "user_name": "Eric Lloyd", "email": "euismod@SuspendisseeleifendCras.com", "phone": "056 1415 3027", "city": "Laon", "id": "337" }, { "user_name": "Bernard Dillard", "email": "pellentesque.Sed@justonec.net", "phone": "0845 46 49", "city": "Venezia", "id": "338" }, { "user_name": "Rhea Simpson", "email": "non@laoreetliberoet.com", "phone": "070 1112 5392", "city": "Appleby", "id": "339" }, { "user_name": "Robert Key", "email": "mi@cubiliaCuraePhasellus.org", "phone": "016977 8754", "city": "Lonzee", "id": "314" }, { "user_name": "Desirae Mcleod", "email": "velit.eget.laoreet@ultriciesadipiscingenim.net", "phone": "0500 199196", "city": "Awka", "id": "341" }, { "user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "026 6928 1321", "city": "Fulda", "id": "344" }];
 
-	var Table = _react2.default.createClass({
-	    displayName: 'Table',
-	    getInitialState: function getInitialState() {
-	        return {
-	            rows: this.props.rows,
-	            cols: this.props.cols,
-	            hiddenColumns: this.props.hiddenColumns
+	var Table = function (_React$Component) {
+	    _inherits(Table, _React$Component);
+
+	    function Table(props) {
+	        _classCallCheck(this, Table);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Table).call(this, props));
+
+	        _this.state = { rows: _this.props.rows,
+	            cols: _this.props.cols,
+	            hiddenColumns: _this.props.hiddenColumns,
+	            sortedRows: _this.props.rows
 	        };
-	    },
+	        // bind manually because React class components don't auto-bind
+	        // http://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#autobinding
+	        _this.onHiddenColumnsChanged = _this.onHiddenColumnsChanged.bind(_this);
+	        return _this;
+	    }
 
+	    _createClass(Table, [{
+	        key: 'onHiddenColumnsChanged',
+	        value: function onHiddenColumnsChanged(newHiddenColumns) {
+	            this.setState({ hiddenColumns: newHiddenColumns });
+	        }
+	    }, {
+	        key: 'changeExpandState',
+	        value: function changeExpandState(index, currentState) {
+	            this.state.rows[index]._expanded = !currentState;
+	            //!!!! we can be efficient here, but now, we are not;
+	            this.forceUpdate();
+	        }
+	    }, {
+	        key: 'filterData',
+	        value: function filterData(col) {
+	            var newRows = _.orderBy(this.state.sortedRows, [col], ['asc', 'desc']);
 
-	    onHiddenColumnsChanged: function onHiddenColumnsChanged(newHiddenColumns) {
-	        this.setState({ hiddenColumns: newHiddenColumns });
-	    },
-
-	    changeExpandState: function changeExpandState(index, currentState) {
-	        this.state.rows[index]._expanded = !currentState;
-	        //!!!! we can be efficient here, but now, we are not;
-	        this.forceUpdate();
-	    },
-
-	    filterData: function filterData(col) {
-	        var sortedRows = _.orderBy(this.state.rows, [col], ['asc', 'desc']);
-	        this.setState({ rows: sortedRows });
-	    },
-
-	    render: function render() {
-	        var columns = this.props.cols.filter(function (c) {
-	            return this.props.hiddenColumns.indexOf(c.Name) == -1;
-	        }.bind(this));
-
-	        var theads = columns.map(function (col, i) {
-	            return _react2.default.createElement(
-	                'th',
-	                { className: 'ttu pv2 ph3 tl striped--border-bottom nowrap', key: col.Name },
-	                col.Name,
-	                _react2.default.createElement('button', { className: 'sort-btn', onClick: this.filterData.bind(this, col.DataName) })
-	            );
-	        }.bind(this));
-
-	        var rows = this.state.rows.map(function (row, index) {
-	            var values = columns.map(function (column) {
-	                var colValue = row[column.DataName];
-	                var tdValue = parseInt(colValue.replace(" ", ''));
-	                if (isNaN(tdValue)) {
-	                    return _react2.default.createElement(
-	                        'td',
-	                        { key: colValue, className: 'pv2 ph3 striped--border-bottom' },
-	                        colValue
-	                    );
-	                } else {
-	                    return _react2.default.createElement(
-	                        'td',
-	                        { key: colValue, className: 'text-right truncate pv2 ph3 striped--border-bottom' },
-	                        colValue
-	                    );
-	                }
+	            this.setState({ rows: newRows });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var columns = this.props.cols.filter(function (c) {
+	                return this.props.hiddenColumns.indexOf(c.Name) == -1;
 	            }.bind(this));
 
-	            var expander = null;
-	            if (this.props.expandRenderComponent && row._expanded) {
-	                expander = _react2.default.createElement(
-	                    'tr',
-	                    null,
-	                    _react2.default.createElement(
-	                        'td',
-	                        { colSpan: this.props.cols.length + 1 - this.state.hiddenColumns.length },
-	                        _react2.default.createElement(this.props.expandRenderComponent, { item: row })
-	                    )
+	            var theads = columns.map(function (col, i) {
+	                return _react2.default.createElement(
+	                    'th',
+	                    { className: 'ttu pv2 ph3 tl striped--border-bottom nowrap', key: col.Name },
+	                    col.Name,
+	                    _react2.default.createElement('button', { className: 'sort-btn', onClick: this.filterData.bind(this, col.DataName) })
 	                );
-	            }
+	            }.bind(this));
 
-	            return _react2.default.createElement(
-	                'tbody',
-	                { key: index },
-	                _react2.default.createElement(
-	                    'tr',
-	                    null,
-	                    _react2.default.createElement(
-	                        'td',
-	                        { onClick: this.changeExpandState.bind(this, index, row._expanded), className: 'ph3 striped--border-bottom' },
-	                        _react2.default.createElement('button', { className: row._expanded ? "rotated btn-caret" : "btn-caret" })
-	                    ),
-	                    values
-	                ),
-	                expander
-	            );
-	        }.bind(this));
+	            var rows = this.state.rows.map(function (row, index) {
+	                var values = columns.map(function (column) {
+	                    var colValue = row[column.DataName];
+	                    var tdValue = parseInt(colValue.replace(" ", ''));
+	                    if (isNaN(tdValue)) {
+	                        return _react2.default.createElement(
+	                            'td',
+	                            { key: colValue, className: 'pv2 ph3 striped--border-bottom' },
+	                            colValue
+	                        );
+	                    } else {
+	                        return _react2.default.createElement(
+	                            'td',
+	                            { key: colValue, className: 'text-right truncate pv2 ph3 striped--border-bottom' },
+	                            colValue
+	                        );
+	                    }
+	                }.bind(this));
 
-	        return _react2.default.createElement(
-	            'div',
-	            null,
-	            _react2.default.createElement(ColumnsVisibilitySelector, { hiddenColumns: this.props.hiddenColumns, cols: this.props.cols, onHiddenColumnsChanged: this.onHiddenColumnsChanged }),
-	            _react2.default.createElement(
-	                'table',
-	                { className: 'collapse ba br2 b--black-10 pv2 ph3' },
-	                _react2.default.createElement(
-	                    'thead',
-	                    null,
+	                var expander = null;
+	                if (this.props.expandRenderComponent && row._expanded) {
+	                    expander = _react2.default.createElement(
+	                        'tr',
+	                        null,
+	                        _react2.default.createElement(
+	                            'td',
+	                            { colSpan: this.props.cols.length + 1 - this.state.hiddenColumns.length },
+	                            _react2.default.createElement(this.props.expandRenderComponent, { item: row })
+	                        )
+	                    );
+	                }
+
+	                return _react2.default.createElement(
+	                    'tbody',
+	                    { key: index },
 	                    _react2.default.createElement(
 	                        'tr',
 	                        null,
-	                        _react2.default.createElement('th', { className: 'ph3 striped--border-bottom' }),
-	                        theads
-	                    )
-	                ),
-	                rows
-	            )
-	        );
-	    }
-	});
+	                        _react2.default.createElement(
+	                            'td',
+	                            { onClick: this.changeExpandState.bind(this, index, row._expanded), className: 'ph3 striped--border-bottom' },
+	                            _react2.default.createElement('button', { className: row._expanded ? "rotated btn-caret" : "btn-caret" })
+	                        ),
+	                        values
+	                    ),
+	                    expander
+	                );
+	            }.bind(this));
 
-	// in props it receives
-	// - array of hidden columns
-	// - cols
-
-
-	var ColumnsVisibilitySelector = _react2.default.createClass({
-	    displayName: 'ColumnsVisibilitySelector',
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            hiddenColumns: this.props.hiddenColumns,
-	            dropdownClass: 'out'
-	        };
-	    },
-
-	    toggleDropdownVisibility: function toggleDropdownVisibility() {
-	        this.state.dropdownClass === "out" ? this.setState({ dropdownClass: "in" }) : this.setState({ dropdownClass: "out" });
-	    },
-
-	    toggleColumnVisibility: function toggleColumnVisibility(columnName) {
-	        var hiddenIndex = this.state.hiddenColumns.indexOf(columnName);
-	        var newHidden = this.state.hiddenColumns;
-
-	        if (hiddenIndex !== -1) newHidden.splice(hiddenIndex, 1);else newHidden.push(columnName);
-
-	        this.setState({ hiddenColumns: newHidden });
-	        this.props.onHiddenColumnsChanged(newHidden);
-	    },
-
-	    handleOutsideClick: function handleOutsideClick(ev) {
-	        var domNode = _reactDom2.default.findDOMNode(this);
-	        if (!domNode || !domNode.contains(ev.target)) {
-	            if (this.state.dropdownClass === 'in') {
-	                this.setState({ dropdownClass: 'out' });
-	            }
-	        }
-	    },
-
-	    componentDidMount: function componentDidMount() {
-	        window.addEventListener('click', this.handleOutsideClick, false);
-	    },
-
-	    render: function render() {
-	        var colNameInputs = this.props.cols.map(function (col) {
 	            return _react2.default.createElement(
 	                'div',
-	                { key: col.Name, className: 'dropdown-select-option dropdown-checkbox pv2 ph3' },
-	                _react2.default.createElement('input', { type: 'checkbox', value: col.Name, id: col.Name, className: 'checkbox', checked: this.state.hiddenColumns.indexOf(col.Name) === -1, onChange: this.toggleColumnVisibility.bind(this, col.Name) }),
+	                null,
+	                _react2.default.createElement(_columnsVisibilitySelector2.default, { hiddenColumns: this.props.hiddenColumns, cols: this.props.cols, onHiddenColumnsChanged: this.onHiddenColumnsChanged }),
 	                _react2.default.createElement(
-	                    'label',
-	                    { className: 'checkbox-label ph2', htmlFor: col.Name },
-	                    col.Name
+	                    'table',
+	                    { className: 'collapse ba br2 b--black-10 pv2 ph3' },
+	                    _react2.default.createElement(
+	                        'thead',
+	                        null,
+	                        _react2.default.createElement(
+	                            'tr',
+	                            null,
+	                            _react2.default.createElement('th', { className: 'ph3 striped--border-bottom' }),
+	                            theads
+	                        )
+	                    ),
+	                    rows
 	                )
 	            );
-	        }.bind(this));
+	        }
+	    }]);
 
-	        return _react2.default.createElement(
-	            'div',
-	            { className: "dropdown-select dropdown-select-trigger mb2 " + this.state.dropdownClass, ref: 'wrappedComponent' },
-	            _react2.default.createElement(
-	                'button',
-	                { className: 'btn btn-dropdown ba b--black-20 bg-white black-90 link br2 dim b dib mr3 pv2 ph3', onClick: this.toggleDropdownVisibility },
-	                'Edit columns'
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'dropdown-options ba b--black-20 bg-white black-70 br2 pv2 ph2 mt1' },
-	                colNameInputs
-	            )
-	        );
-	    }
-	});
+	    return Table;
+	}(_react2.default.Component);
 
-	var ExpandRenderer = _react2.default.createClass({
-	    displayName: 'ExpandRenderer',
+	;
 
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'tc' },
-	            _react2.default.createElement(
-	                'h3',
-	                null,
-	                this.props.item.user_name
-	            ),
-	            _react2.default.createElement(
-	                'h4',
-	                null,
-	                this.props.item.email
-	            ),
-	            _react2.default.createElement(
-	                'p',
-	                null,
-	                'More information about this user available ',
-	                _react2.default.createElement(
-	                    'a',
-	                    { href: '#' },
-	                    'here'
-	                )
-	            )
-	        );
-	    }
-	});
-
-	_reactDom2.default.render(_react2.default.createElement(Table, { cols: exampleCols, rows: exampleRows, hiddenColumns: [], expandRenderComponent: ExpandRenderer }), document.getElementById('table'));
+	_reactDom2.default.render(_react2.default.createElement(Table, { cols: exampleCols, rows: exampleRows, hiddenColumns: [], expandRenderComponent: _expandRenderer2.default }), document.getElementById('table'));
 
 	exports.default = Table;
 
@@ -38305,6 +38236,180 @@
 		return module;
 	}
 
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(36);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ExpandRenderer = function (_React$Component) {
+	    _inherits(ExpandRenderer, _React$Component);
+
+	    function ExpandRenderer() {
+	        _classCallCheck(this, ExpandRenderer);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ExpandRenderer).apply(this, arguments));
+	    }
+
+	    _createClass(ExpandRenderer, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'tc' },
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    this.props.item.user_name
+	                ),
+	                _react2.default.createElement(
+	                    'h4',
+	                    null,
+	                    this.props.item.email
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'More information about this user available ',
+	                    _react2.default.createElement(
+	                        'a',
+	                        { href: '#' },
+	                        'here'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ExpandRenderer;
+	}(_react2.default.Component);
+
+	exports.default = ExpandRenderer;
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(36);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ColumnsVisibilitySelector = function (_React$Component) {
+	    _inherits(ColumnsVisibilitySelector, _React$Component);
+
+	    function ColumnsVisibilitySelector(props) {
+	        _classCallCheck(this, ColumnsVisibilitySelector);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ColumnsVisibilitySelector).call(this, props));
+
+	        _this.state = { hiddenColumns: _this.props.hiddenColumns,
+	            dropdownClass: 'out'
+	        };
+	        // bind manually because React class components don't auto-bind
+	        // http://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#autobinding
+	        _this.toggleColumnVisibility = _this.toggleColumnVisibility.bind(_this);
+	        _this.toggleDropdownVisibility = _this.toggleDropdownVisibility.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(ColumnsVisibilitySelector, [{
+	        key: 'toggleDropdownVisibility',
+	        value: function toggleDropdownVisibility() {
+	            this.state.dropdownClass === "out" ? this.setState({ dropdownClass: "in" }) : this.setState({ dropdownClass: "out" });
+	        }
+	    }, {
+	        key: 'toggleColumnVisibility',
+	        value: function toggleColumnVisibility(columnName) {
+	            var hiddenIndex = this.state.hiddenColumns.indexOf(columnName);
+	            var newHidden = this.state.hiddenColumns;
+
+	            if (hiddenIndex !== -1) newHidden.splice(hiddenIndex, 1);else newHidden.push(columnName);
+
+	            this.setState({ hiddenColumns: newHidden });
+	            this.props.onHiddenColumnsChanged(newHidden);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var colNameInputs = this.props.cols.map(function (col) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { key: col.Name, className: 'dropdown-select-option dropdown-checkbox pv2 ph3' },
+	                    _react2.default.createElement('input', { type: 'checkbox', value: col.Name, id: col.Name, className: 'checkbox', checked: this.state.hiddenColumns.indexOf(col.Name) === -1, onChange: this.toggleColumnVisibility.bind(this, col.Name) }),
+	                    _react2.default.createElement(
+	                        'label',
+	                        { className: 'checkbox-label ph2', htmlFor: col.Name },
+	                        col.Name
+	                    )
+	                );
+	            }.bind(this));
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: "dropdown-select dropdown-select-trigger mb2 " + this.state.dropdownClass, ref: 'wrappedComponent' },
+	                _react2.default.createElement(
+	                    'button',
+	                    { className: 'btn btn-dropdown ba b--black-20 bg-white black-90 link br2 dim b dib mr3 pv2 ph3', onClick: this.toggleDropdownVisibility },
+	                    'Edit columns'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'dropdown-options ba b--black-20 bg-white black-70 br2 pv2 ph2 mt1' },
+	                    colNameInputs
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ColumnsVisibilitySelector;
+	}(_react2.default.Component);
+
+	;
+
+	exports.default = ColumnsVisibilitySelector;
 
 /***/ }
 /******/ ]);

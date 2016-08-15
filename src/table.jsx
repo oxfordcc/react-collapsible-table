@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { orderBy, sortBy } from 'lodash';
 
+import ExpandRenderer from './expandRenderer.jsx';
+import ColumnsVisibilitySelector from './columnsVisibilitySelector.jsx';
+
 var exampleCols = [{"Name": "User Name", "DataName": "user_name"},
             {"Name": "Id", "DataName": "id"},
             {"Name": "Email", "DataName": "email"},
@@ -19,31 +22,38 @@ var exampleRows = [{"user_name": "Jael Bush", "email": "porttitor.interdum@sed.c
             {"user_name": "Honorato Mckay", "email": "risus.a@utnullaCras.ca", "phone": "026 6928 1321", "city": "Fulda", "id": "344" }
             ];
 
-var Table = React.createClass({
-    getInitialState() {
-        return {
-            rows: this.props.rows,
+class Table extends React.Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {rows: this.props.rows,
             cols: this.props.cols,
-            hiddenColumns: this.props.hiddenColumns
-        };
-    },
+            hiddenColumns: this.props.hiddenColumns,
+            sortedRows: this.props.rows
+        }
+        // bind manually because React class components don't auto-bind
+        // http://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#autobinding
+        this.onHiddenColumnsChanged = this.onHiddenColumnsChanged.bind(this);
+    }
 
-    onHiddenColumnsChanged: function (newHiddenColumns) {
+
+    onHiddenColumnsChanged(newHiddenColumns) {
         this.setState({ hiddenColumns: newHiddenColumns });
-    },
+    }
 
-    changeExpandState: function(index, currentState) {
+    changeExpandState(index, currentState) {
         this.state.rows[index]._expanded = !currentState;
         //!!!! we can be efficient here, but now, we are not;
         this.forceUpdate();
-    },
+    }
 
-    filterData: function(col) {
-        var sortedRows = _.orderBy(this.state.rows, [col], ['asc', 'desc']);
-        this.setState({rows: sortedRows});
-    },
+    filterData(col) {
+        var newRows = _.orderBy(this.state.sortedRows, [col], ['asc', 'desc']);
 
-    render: function() {
+        this.setState({rows: newRows});
+    }
+
+    render() {
         var columns = this.props.cols.filter(function(c) { return this.props.hiddenColumns.indexOf(c.Name) == -1; }.bind(this));
 
         var theads = columns.map(function(col, i) {
@@ -100,82 +110,7 @@ var Table = React.createClass({
             </div>
         );
     }
-});
-
-
-// in props it receives
-// - array of hidden columns
-// - cols
-
-
-var ColumnsVisibilitySelector = React.createClass({
-    getInitialState: function () {
-        return {
-            hiddenColumns: this.props.hiddenColumns,
-            dropdownClass: 'out'
-        }
-    },
-
-    toggleDropdownVisibility: function () {
-        this.state.dropdownClass === "out" ? this.setState({ dropdownClass: "in" }) : this.setState({ dropdownClass: "out" })
-    },
-
-    toggleColumnVisibility: function (columnName) {
-        var hiddenIndex = this.state.hiddenColumns.indexOf(columnName);
-        var newHidden = this.state.hiddenColumns;
-
-        if (hiddenIndex !== -1) newHidden.splice(hiddenIndex, 1);
-        else newHidden.push(columnName);
-
-        this.setState({ hiddenColumns: newHidden });
-        this.props.onHiddenColumnsChanged(newHidden);
-    },
-
-    handleOutsideClick: function (ev) {
-        var domNode = ReactDOM.findDOMNode(this);
-        if(!domNode || !domNode.contains(ev.target)) {
-            if (this.state.dropdownClass === 'in') {
-                this.setState({ dropdownClass: 'out' });
-            }
-        }
-    },
-
-    componentDidMount: function () {
-        window.addEventListener('click', this.handleOutsideClick, false);
-    },
-
-    render: function () {
-        var colNameInputs = this.props.cols.map(function (col) {
-            return (
-            <div key={col.Name} className="dropdown-select-option dropdown-checkbox pv2 ph3">
-                <input type="checkbox" value={col.Name} id={col.Name} className="checkbox" checked={this.state.hiddenColumns.indexOf(col.Name) === -1} onChange={this.toggleColumnVisibility.bind(this, col.Name)} />
-                <label className="checkbox-label ph2" htmlFor={col.Name}>{col.Name}</label>
-            </div>
-            );
-    }.bind(this));
-
-    return (
-        <div className={"dropdown-select dropdown-select-trigger mb2 " + this.state.dropdownClass } ref="wrappedComponent">
-            <button className="btn btn-dropdown ba b--black-20 bg-white black-90 link br2 dim b dib mr3 pv2 ph3" onClick={this.toggleDropdownVisibility }>Edit columns</button>
-            <div className="dropdown-options ba b--black-20 bg-white black-70 br2 pv2 ph2 mt1">
-                {colNameInputs}
-            </div>
-        </div>
-        );
-    }
-});
-
-var ExpandRenderer = React.createClass({
-    render: function() {
-        return (
-            <div className="tc">
-                <h3>{this.props.item.user_name}</h3>
-                <h4>{this.props.item.email}</h4>
-                <p>More information about this user available <a href='#'>here</a></p>
-            </div>
-        );
-    }
-});
+};
 
 ReactDOM.render(
     <Table cols={exampleCols} rows={exampleRows} hiddenColumns={[]} expandRenderComponent={ExpandRenderer}/ >, document.getElementById('table')
