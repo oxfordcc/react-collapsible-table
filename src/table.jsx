@@ -29,7 +29,9 @@ class Table extends React.Component{
         this.state = {rows: this.props.rows,
             cols: this.props.cols,
             hiddenColumns: this.props.hiddenColumns,
-            sortedRows: this.props.rows
+            sortedRows: this.props.rows,
+            sortedColName: '',
+            sortAsc: true
         }
         // bind manually because React class components don't auto-bind
         // http://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#autobinding
@@ -48,8 +50,17 @@ class Table extends React.Component{
     }
 
     filterData(col) {
-        var newRows = _.orderBy(this.state.sortedRows, [col], ['asc', 'desc']);
-
+        let newRows = [];
+        if(this.state.sortedColName === col) {
+            this.state.sortAsc ? newRows = _.orderBy(this.state.sortedRows, [col], ['desc']) : newRows = _.orderBy(this.state.sortedRows, [col], ['asc']);
+            this.setState({sortedColName: col});
+            this.setState({sortAsc: !this.state.sortAsc});
+        }
+       
+        else {
+            newRows = _.orderBy(this.state.sortedRows, [col], ['asc']);
+            this.setState({sortedColName: col, sortAsc: true});
+        }
         this.setState({rows: newRows});
     }
 
